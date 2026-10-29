@@ -53,6 +53,7 @@ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',vals.
 if(label)label.textContent='Next colour · '+String(option.number).padStart(2,'0')+'/72';
 if(status)status.textContent='Theme '+String(option.number).padStart(2,'0')+' of 72 · '+option.theme+' · '+option.variant;
 }
-button.addEventListener('click',()=>{current=(current+1)%all.length;apply(all[current])});
+button.style.pointerEvents='auto';
+button.onclick=(event)=>{event.preventDefault();event.stopPropagation();current=(current+1)%all.length;apply(all[current]);};
 apply(all[0]);
 })();
