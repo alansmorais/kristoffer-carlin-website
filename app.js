@@ -37,7 +37,7 @@ const variants=[
 {name:'Dark',r:[5,1,4,1,5,1,0,1,2,5,3,1]}
 ];
 const launcher=document.querySelector('#palette-launcher'),menu=document.querySelector('#palette-menu'),close=document.querySelector('#palette-close'),grid=document.querySelector('#palette-menu-grid'),status=document.querySelector('#palette-current');
-if(!launcher||!menu||!grid)return;
+if(!launcher||!menu||!grid){console.error('Palette selector markup is missing');return;} launcher.style.display='flex'; launcher.style.visibility='visible'; launcher.style.opacity='1';
 const all=[];
 themes.forEach((theme,ti)=>variants.forEach((variant,vi)=>all.push({number:all.length+1,theme:theme[0],colors:theme[1],variant:variant.name,r:variant.r})));
 function apply(option){
