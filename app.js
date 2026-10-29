@@ -10,7 +10,8 @@ const form=document.querySelector('#contact-form'),status=document.querySelector
 loadContent();
 })();
 
-/* 6 palettes x 6 visual combinations = 36 full-site color treatments. */
+
+/* Floating palette lab: one click chooses palette; one click chooses any of six color-role combinations. */
 const paletteData={
  'earth-flame':{name:'01 · Earth & inner flame',colors:['#4F6B3F','#F5EDE3','#EB9C35','#C4501B','#3E2F25','#1B1B1B']},
  'deep-freedom':{name:'02 · Deep, warm & free',colors:['#5A7D5A','#F2E8D9','#D4A017','#EB6B2D','#A5523D','#4A3428']},
@@ -19,31 +20,22 @@ const paletteData={
  'clay-fire':{name:'05 · Clay & fire',colors:['#315C4A','#F5EDE3','#EB6B2D','#A5523D','#382818','#FCFBF7']},
  'moss-walnut':{name:'06 · Moss & walnut',colors:['#5A7D5A','#F2E8D9','#D4A017','#A5523D','#4A3428','#1B1B1B']}
 };
-const variantNames=['A · Light & natural','B · Olive & cream','C · Forest & cream','D · Golden earth','E · Terracotta warmth','F · Dark & immersive'];
-/* Roles map to palette color indexes: page, text, light section, light text, dark section, dark text, green/card section, card text, CTA, CTA text, warm accent, warm text. */
 const roleMaps=[
- [1,5,1,4,0,1,1,4,0,1,2,5],
- [0,4,1,4,0,1,1,4,2,5,3,1],
- [5,1,4,1,0,1,0,1,2,5,3,1],
- [2,5,1,5,4,1,0,1,2,5,3,5],
- [1,4,5,4,4,1,0,1,3,1,2,5],
- [5,1,4,1,5,1,0,1,2,5,3,1]
+ [1,5,1,4,0,1,1,4,0,1,2,5],[0,4,1,4,0,1,1,4,2,5,3,1],[5,1,4,1,0,1,0,1,2,5,3,1],[2,5,1,5,4,1,0,1,2,5,3,5],[1,4,5,4,4,1,0,1,3,1,2,5],[5,1,4,1,5,1,0,1,2,5,3,1]
 ];
-const paletteButtons=[...document.querySelectorAll('[data-palette]')];
-const variationButtons=[...document.querySelectorAll('[data-variation]')];
-const paletteStatus=document.querySelector('#palette-current');
+const variationNames=['A · Light & natural','B · Olive & cream','C · Forest & cream','D · Golden earth','E · Terracotta warmth','F · Dark & immersive'];
+const paletteButtons=[...document.querySelectorAll('[data-palette]')],variationButtons=[...document.querySelectorAll('[data-variation]')],paletteStatus=document.querySelector('#palette-current');
 let activePaletteKey='earth-flame',activeVariation=1;
-function setVar(name,value){document.documentElement.style.setProperty('--'+name,value)}
 function applyCombination(){
- const data=paletteData[activePaletteKey];if(!data)return;
- const c=data.colors,roles=roleMaps[activeVariation-1];
- const values={pageBg:c[roles[0]],pageText:c[roles[1]],lightSurface:c[roles[2]],lightText:c[roles[3]],darkSurface:c[roles[4]],darkText:c[roles[5]],greenSurface:c[roles[6]],greenText:c[roles[7]],accent:c[roles[8]],accentText:c[roles[9]],warmSurface:c[roles[10]],warmText:c[roles[11]],borderColor:c[roles[4]]+'66',fieldBg:'#FFFFFF12',fieldBorder:c[roles[5]]+'99'};
- Object.entries(values).forEach(([key,value])=>setVar(key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),value));
+ const data=paletteData[activePaletteKey];if(!data)return;const c=data.colors,r=roleMaps[activeVariation-1];
+ const vals={pageBg:c[r[0]],pageText:c[r[1]],lightSurface:c[r[2]],lightText:c[r[3]],darkSurface:c[r[4]],darkText:c[r[5]],greenSurface:c[r[6]],greenText:c[r[7]],accent:c[r[8]],accentText:c[r[9]],warmSurface:c[r[10]],warmText:c[r[11]],borderColor:c[r[4]]+'66',fieldBg:'#FFFFFF12',fieldBorder:c[r[5]]+'99'};
+ Object.entries(vals).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),v));
  document.documentElement.dataset.palette=activePaletteKey;
  paletteButtons.forEach(b=>{const on=b.dataset.palette===activePaletteKey;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',String(on))});
  variationButtons.forEach(b=>{const on=Number(b.dataset.variation)===activeVariation;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',String(on))});
- if(paletteStatus)paletteStatus.textContent='Selected: '+data.name+' · '+variantNames[activeVariation-1]+' (combination '+activeVariation+'/6)';
- document.querySelector('meta[name="theme-color"]')?.setAttribute('content',c[roles[4]]);
+ document.querySelectorAll('.combination-preview').forEach(el=>{el.style.setProperty('--page-bg',c[r[0]]);el.style.setProperty('--dark-surface',c[r[4]])});
+ if(paletteStatus)paletteStatus.textContent='Selected: '+data.name+' · '+variationNames[activeVariation-1]+' · '+activeVariation+'/6';
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',c[r[4]]);
 }
 paletteButtons.forEach(b=>b.addEventListener('click',()=>{activePaletteKey=b.dataset.palette;applyCombination()}));
 variationButtons.forEach(b=>b.addEventListener('click',()=>{activeVariation=Number(b.dataset.variation);applyCombination()}));
