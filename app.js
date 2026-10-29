@@ -9,36 +9,42 @@ async function loadContent(){if(!endpoint)return;for(const [action,target] of [[
 const form=document.querySelector('#contact-form'),status=document.querySelector('#contact-status');form?.addEventListener('submit',async e=>{e.preventDefault();if(!endpoint){status.textContent=language==='no'?'Skjemaet er ikke aktivert ennå.':'The form is not enabled yet.';return}const button=form.querySelector('button[type=submit]');button.disabled=true;try{const data=Object.fromEntries(new FormData(form));const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'contact',...data,lang:language})});const result=await res.json();if(!res.ok||result.ok!==true)throw Error('Submission failed');form.reset();status.textContent=language==='no'?'Takk — meldingen er sendt.':'Thank you — your message has been sent.'}catch(_){status.textContent=language==='no'?'Meldingen kunne ikke sendes. Prøv igjen senere.':'Your message could not be sent. Please try again later.'}finally{button.disabled=false}});
 loadContent();
 })();
-/* Palette switcher for the experimental branch. No storage or network calls. */
-const paletteThemes={
- 'earth-flame':{name:'01 · Earth & inner flame',forest:'#3E2F25',moss:'#4F6B3F',leaf:'#4F6B3F',ivory:'#F5EDE3',cream:'#F5EDE3',ochre:'#EB9C35',gold:'#EB9C35',terracotta:'#C4501B',rust:'#C4501B',earth:'#3E2F25',ink:'#1B1B1B',muted:'#D8CBB9',line:'rgba(245,237,227,.22)'},
- 'deep-freedom':{name:'02 · Deep, warm & free',forest:'#26372A',moss:'#5A7D5A',leaf:'#5A7D5A',ivory:'#F2E8D9',cream:'#F2E8D9',ochre:'#D4A017',gold:'#D4A017',terracotta:'#EB6B2D',rust:'#A5523D',earth:'#4A3428',ink:'#24251F',muted:'#D2C5B3',line:'rgba(242,232,217,.22)'},
- 'spark-happiness':{name:'03 · Spark & happiness',forest:'#133414',moss:'#4E7145',leaf:'#4E7145',ivory:'#F5EDE3',cream:'#F5EDE3',ochre:'#EB9C35',gold:'#EB9C35',terracotta:'#C4501B',rust:'#8A2C12',earth:'#3E2F25',ink:'#1B1B1B',muted:'#D8CBB9',line:'rgba(245,237,227,.22)'},
- 'forest-sun':{name:'04 · Forest & sun',forest:'#24483A',moss:'#486838',leaf:'#8FA995',ivory:'#F5F1E8',cream:'#FCFBF7',ochre:'#D8A52C',gold:'#D8A52C',terracotta:'#D88908',rust:'#6B4A2E',earth:'#382818',ink:'#26332D',muted:'#DDE9E0',line:'rgba(245,241,232,.24)'},
- 'clay-fire':{name:'05 · Clay & fire',forest:'#315C4A',moss:'#486838',leaf:'#8FA995',ivory:'#FCFBF7',cream:'#F5EDE3',ochre:'#D8A52C',gold:'#EB6B2D',terracotta:'#A5523D',rust:'#C4501B',earth:'#382818',ink:'#26332D',muted:'#DDE9E0',line:'rgba(252,251,247,.24)'},
- 'moss-walnut':{name:'06 · Moss & walnut',forest:'#3E4F38',moss:'#5A7D5A',leaf:'#8FA995',ivory:'#F2E8D9',cream:'#F5EDE3',ochre:'#D4A017',gold:'#D4A017',terracotta:'#A5523D',rust:'#A5523D',earth:'#4A3428',ink:'#1B1B1B',muted:'#D2C5B3',line:'rgba(242,232,217,.22)'}
-};
-const paletteButtons=[...document.querySelectorAll('[data-palette]')],paletteStatus=document.querySelector('#palette-current');
-function applyPalette(key){const theme=paletteThemes[key];if(!theme)return;document.documentElement.dataset.palette=key;Object.entries(theme).forEach(([name,value])=>{if(name!=='name')document.documentElement.style.setProperty('--'+name,value)});paletteButtons.forEach(button=>{const active=button.dataset.palette===key;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active))});if(paletteStatus)paletteStatus.textContent='Selected: '+theme.name;document.querySelector('meta[name="theme-color"]')?.setAttribute('content',theme.forest)}
-paletteButtons.forEach(button=>button.addEventListener('click',()=>applyPalette(button.dataset.palette)));
 
-/* Three color-role variations per palette. This only changes CSS variables on this branch. */
-const paletteVariations={
- light:{pageBg:'cream',pageText:'ink',lightSurface:'cream',lightText:'earth',darkSurface:'forest',darkText:'ivory',greenSurface:'moss',greenText:'ivory',accent:'gold',accentText:'ink',warmSurface:'terracotta',warmText:'#FFFFFF',border:'earth',fieldBg:'#FFFFFF12',fieldBorder:'ivory'},
- green:{pageBg:'leaf',pageText:'ivory',lightSurface:'moss',lightText:'ivory',darkSurface:'forest',darkText:'ivory',greenSurface:'cream',greenText:'earth',accent:'gold',accentText:'ink',warmSurface:'terracotta',warmText:'#FFFFFF',border:'ivory',fieldBg:'#FFFFFF10',fieldBorder:'ivory'},
- dark:{pageBg:'ink',pageText:'ivory',lightSurface:'earth',lightText:'ivory',darkSurface:'ink',darkText:'ivory',greenSurface:'forest',greenText:'ivory',accent:'gold',accentText:'ink',warmSurface:'terracotta',warmText:'#FFFFFF',border:'ivory',fieldBg:'#FFFFFF0D',fieldBorder:'ivory'}
+/* 6 palettes x 6 visual combinations = 36 full-site color treatments. */
+const paletteData={
+ 'earth-flame':{name:'01 · Earth & inner flame',colors:['#4F6B3F','#F5EDE3','#EB9C35','#C4501B','#3E2F25','#1B1B1B']},
+ 'deep-freedom':{name:'02 · Deep, warm & free',colors:['#5A7D5A','#F2E8D9','#D4A017','#EB6B2D','#A5523D','#4A3428']},
+ 'spark-happiness':{name:'03 · Spark & happiness',colors:['#133414','#4E7145','#EB9C35','#C4501B','#8A2C12','#F5EDE3']},
+ 'forest-sun':{name:'04 · Forest & sun',colors:['#24483A','#DDE9E0','#D8A52C','#D88908','#6B4A2E','#F5F1E8']},
+ 'clay-fire':{name:'05 · Clay & fire',colors:['#315C4A','#F5EDE3','#EB6B2D','#A5523D','#382818','#FCFBF7']},
+ 'moss-walnut':{name:'06 · Moss & walnut',colors:['#5A7D5A','#F2E8D9','#D4A017','#A5523D','#4A3428','#1B1B1B']}
 };
+const variantNames=['A · Light & natural','B · Olive & cream','C · Forest & cream','D · Golden earth','E · Terracotta warmth','F · Dark & immersive'];
+/* Roles map to palette color indexes: page, text, light section, light text, dark section, dark text, green/card section, card text, CTA, CTA text, warm accent, warm text. */
+const roleMaps=[
+ [1,5,1,4,0,1,1,4,0,1,2,5],
+ [0,4,1,4,0,1,1,4,2,5,3,1],
+ [5,1,4,1,0,1,0,1,2,5,3,1],
+ [2,5,1,5,4,1,0,1,2,5,3,5],
+ [1,4,5,4,4,1,0,1,3,1,2,5],
+ [5,1,4,1,5,1,0,1,2,5,3,1]
+];
+const paletteButtons=[...document.querySelectorAll('[data-palette]')];
 const variationButtons=[...document.querySelectorAll('[data-variation]')];
-let activePaletteKey='earth-flame',activeVariationKey='light';
-function resolvePaletteColor(theme,token){if(token.startsWith('#')||token.startsWith('rgba'))return token;return theme[token]||'#FFFFFF'}
-function applyVariation(key){
- const theme=paletteThemes[activePaletteKey],roles=paletteVariations[key];if(!theme||!roles)return;activeVariationKey=key;
- const valueMap={pageBg:resolvePaletteColor(theme,roles.pageBg),pageText:resolvePaletteColor(theme,roles.pageText),lightSurface:resolvePaletteColor(theme,roles.lightSurface),lightText:resolvePaletteColor(theme,roles.lightText),darkSurface:resolvePaletteColor(theme,roles.darkSurface),darkText:resolvePaletteColor(theme,roles.darkText),greenSurface:resolvePaletteColor(theme,roles.greenSurface),greenText:resolvePaletteColor(theme,roles.greenText),accent:resolvePaletteColor(theme,roles.accent),accentText:resolvePaletteColor(theme,roles.accentText),warmSurface:resolvePaletteColor(theme,roles.warmSurface),warmText:resolvePaletteColor(theme,roles.warmText),borderColor:resolvePaletteColor(theme,roles.border)+'66',fieldBg:roles.fieldBg,fieldBorder:resolvePaletteColor(theme,roles.fieldBorder)};
- Object.entries(valueMap).forEach(([name,value])=>document.documentElement.style.setProperty('--'+name.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),value));
- variationButtons.forEach(button=>{const active=button.dataset.variation===key;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active))});
- if(paletteStatus)paletteStatus.textContent='Selected: '+theme.name+' · '+({light:'A · Light & natural',green:'B · Green & grounded',dark:'C · Dark & immersive'}[key]);
+const paletteStatus=document.querySelector('#palette-current');
+let activePaletteKey='earth-flame',activeVariation=1;
+function setVar(name,value){document.documentElement.style.setProperty('--'+name,value)}
+function applyCombination(){
+ const data=paletteData[activePaletteKey];if(!data)return;
+ const c=data.colors,roles=roleMaps[activeVariation-1];
+ const values={pageBg:c[roles[0]],pageText:c[roles[1]],lightSurface:c[roles[2]],lightText:c[roles[3]],darkSurface:c[roles[4]],darkText:c[roles[5]],greenSurface:c[roles[6]],greenText:c[roles[7]],accent:c[roles[8]],accentText:c[roles[9]],warmSurface:c[roles[10]],warmText:c[roles[11]],borderColor:c[roles[4]]+'66',fieldBg:'#FFFFFF12',fieldBorder:c[roles[5]]+'99'};
+ Object.entries(values).forEach(([key,value])=>setVar(key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),value));
+ document.documentElement.dataset.palette=activePaletteKey;
+ paletteButtons.forEach(b=>{const on=b.dataset.palette===activePaletteKey;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',String(on))});
+ variationButtons.forEach(b=>{const on=Number(b.dataset.variation)===activeVariation;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',String(on))});
+ if(paletteStatus)paletteStatus.textContent='Selected: '+data.name+' · '+variantNames[activeVariation-1]+' (combination '+activeVariation+'/6)';
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',c[roles[4]]);
 }
-function choosePalette(key){if(!paletteThemes[key])return;activePaletteKey=key;applyPalette(key);applyVariation(activeVariationKey)}
-paletteButtons.forEach(button=>{button.removeEventListener('click',()=>applyPalette(button.dataset.palette));button.addEventListener('click',()=>choosePalette(button.dataset.palette))});
-variationButtons.forEach(button=>button.addEventListener('click',()=>applyVariation(button.dataset.variation)));
-applyVariation('light');
+paletteButtons.forEach(b=>b.addEventListener('click',()=>{activePaletteKey=b.dataset.palette;applyCombination()}));
+variationButtons.forEach(b=>b.addEventListener('click',()=>{activeVariation=Number(b.dataset.variation);applyCombination()}));
+applyCombination();
