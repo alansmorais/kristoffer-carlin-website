@@ -21,3 +21,24 @@ const paletteThemes={
 const paletteButtons=[...document.querySelectorAll('[data-palette]')],paletteStatus=document.querySelector('#palette-current');
 function applyPalette(key){const theme=paletteThemes[key];if(!theme)return;document.documentElement.dataset.palette=key;Object.entries(theme).forEach(([name,value])=>{if(name!=='name')document.documentElement.style.setProperty('--'+name,value)});paletteButtons.forEach(button=>{const active=button.dataset.palette===key;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active))});if(paletteStatus)paletteStatus.textContent='Selected: '+theme.name;document.querySelector('meta[name="theme-color"]')?.setAttribute('content',theme.forest)}
 paletteButtons.forEach(button=>button.addEventListener('click',()=>applyPalette(button.dataset.palette)));
+
+/* Three color-role variations per palette. This only changes CSS variables on this branch. */
+const paletteVariations={
+ light:{pageBg:'cream',pageText:'ink',lightSurface:'cream',lightText:'earth',darkSurface:'forest',darkText:'ivory',greenSurface:'moss',greenText:'ivory',accent:'gold',accentText:'ink',warmSurface:'terracotta',warmText:'#FFFFFF',border:'earth',fieldBg:'#FFFFFF12',fieldBorder:'ivory'},
+ green:{pageBg:'leaf',pageText:'ivory',lightSurface:'moss',lightText:'ivory',darkSurface:'forest',darkText:'ivory',greenSurface:'cream',greenText:'earth',accent:'gold',accentText:'ink',warmSurface:'terracotta',warmText:'#FFFFFF',border:'ivory',fieldBg:'#FFFFFF10',fieldBorder:'ivory'},
+ dark:{pageBg:'ink',pageText:'ivory',lightSurface:'earth',lightText:'ivory',darkSurface:'ink',darkText:'ivory',greenSurface:'forest',greenText:'ivory',accent:'gold',accentText:'ink',warmSurface:'terracotta',warmText:'#FFFFFF',border:'ivory',fieldBg:'#FFFFFF0D',fieldBorder:'ivory'}
+};
+const variationButtons=[...document.querySelectorAll('[data-variation]')];
+let activePaletteKey='earth-flame',activeVariationKey='light';
+function resolvePaletteColor(theme,token){if(token.startsWith('#')||token.startsWith('rgba'))return token;return theme[token]||'#FFFFFF'}
+function applyVariation(key){
+ const theme=paletteThemes[activePaletteKey],roles=paletteVariations[key];if(!theme||!roles)return;activeVariationKey=key;
+ const valueMap={pageBg:resolvePaletteColor(theme,roles.pageBg),pageText:resolvePaletteColor(theme,roles.pageText),lightSurface:resolvePaletteColor(theme,roles.lightSurface),lightText:resolvePaletteColor(theme,roles.lightText),darkSurface:resolvePaletteColor(theme,roles.darkSurface),darkText:resolvePaletteColor(theme,roles.darkText),greenSurface:resolvePaletteColor(theme,roles.greenSurface),greenText:resolvePaletteColor(theme,roles.greenText),accent:resolvePaletteColor(theme,roles.accent),accentText:resolvePaletteColor(theme,roles.accentText),warmSurface:resolvePaletteColor(theme,roles.warmSurface),warmText:resolvePaletteColor(theme,roles.warmText),borderColor:resolvePaletteColor(theme,roles.border)+'66',fieldBg:roles.fieldBg,fieldBorder:resolvePaletteColor(theme,roles.fieldBorder)};
+ Object.entries(valueMap).forEach(([name,value])=>document.documentElement.style.setProperty('--'+name.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),value));
+ variationButtons.forEach(button=>{const active=button.dataset.variation===key;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active))});
+ if(paletteStatus)paletteStatus.textContent='Selected: '+theme.name+' · '+({light:'A · Light & natural',green:'B · Green & grounded',dark:'C · Dark & immersive'}[key]);
+}
+function choosePalette(key){if(!paletteThemes[key])return;activePaletteKey=key;applyPalette(key);applyVariation(activeVariationKey)}
+paletteButtons.forEach(button=>{button.removeEventListener('click',()=>applyPalette(button.dataset.palette));button.addEventListener('click',()=>choosePalette(button.dataset.palette))});
+variationButtons.forEach(button=>button.addEventListener('click',()=>applyVariation(button.dataset.variation)));
+applyVariation('light');
