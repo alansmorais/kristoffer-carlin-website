@@ -12,7 +12,8 @@ loadContent();
 
 
 
-/* 72 single-click themes: one launcher opens a grid; each numbered option applies a complete theme. */
+
+/* Single floating button cycles through 72 complete colour themes on every click. */
 (() => {
 const themes=[
 ['Earth & flame',['#4F6B3F','#F5EDE3','#EB9C35','#C4501B','#3E2F25','#1B1B1B']],
@@ -36,31 +37,22 @@ const variants=[
 {name:'Terracotta',r:[1,5,4,1,4,1,0,1,3,1,2,5]},
 {name:'Dark',r:[5,1,4,1,5,1,0,1,2,5,3,1]}
 ];
-const launcher=document.querySelector('#palette-launcher'),menu=document.querySelector('#palette-menu'),close=document.querySelector('#palette-close'),grid=document.querySelector('#palette-menu-grid'),status=document.querySelector('#palette-current');
-if(!launcher||!menu||!grid){console.error('Palette selector markup is missing');return;} launcher.style.display='flex'; launcher.style.visibility='visible'; launcher.style.opacity='1';
+const button=document.querySelector('#palette-launcher'),label=document.querySelector('#palette-launcher-label'),status=document.querySelector('#palette-current');
+if(!button)return;
 const all=[];
-themes.forEach((theme,ti)=>variants.forEach((variant,vi)=>all.push({number:all.length+1,theme:theme[0],colors:theme[1],variant:variant.name,r:variant.r})));
+themes.forEach(theme=>variants.forEach(variant=>all.push({number:all.length+1,theme:theme[0],colors:theme[1],variant:variant.name,r:variant.r})));
+let current=0;
 function apply(option){
 const c=option.colors,r=option.r;
 const vals={pageBg:c[r[0]],pageText:c[r[1]],lightSurface:c[r[2]],lightText:c[r[3]],darkSurface:c[r[4]],darkText:c[r[5]],greenSurface:c[r[6]],greenText:c[r[7]],accent:c[r[8]],accentText:c[r[9]],warmSurface:c[r[10]],warmText:c[r[11]],borderColor:c[r[4]]+'66',fieldBg:c[r[4]]+'18',fieldBorder:c[r[5]]+'99'};
 Object.entries(vals).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase()),v));
-/* Also update the original stylesheet variables so every section and heading follows the chosen theme. */
 const aliases={forest:vals.darkSurface,moss:vals.greenSurface,leaf:vals.greenSurface,ivory:vals.darkText,cream:vals.pageBg,ochre:vals.accent,gold:vals.accent,terracotta:vals.warmSurface,rust:vals.warmSurface,earth:vals.darkSurface,ink:vals.pageText,muted:vals.darkText,line:vals.borderColor};
 Object.entries(aliases).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
 document.documentElement.dataset.palette='option-'+String(option.number).padStart(2,'0');
 document.querySelector('meta[name="theme-color"]')?.setAttribute('content',vals.darkSurface);
-grid.querySelectorAll('.palette-choice').forEach(b=>{const active=Number(b.dataset.option)===option.number;b.classList.toggle('is-active',active);b.setAttribute('aria-pressed',String(active))});
-if(status)status.textContent='Option '+String(option.number).padStart(2,'0')+' of 72 · '+option.theme+' · '+option.variant;
+if(label)label.textContent='Next colour · '+String(option.number).padStart(2,'0')+'/72';
+if(status)status.textContent='Theme '+String(option.number).padStart(2,'0')+' of 72 · '+option.theme+' · '+option.variant;
 }
-all.forEach(o=>{
-const b=document.createElement('button');b.type='button';b.className='palette-choice';b.dataset.option=String(o.number);b.setAttribute('aria-pressed',o.number===1?'true':'false');
-const sw=document.createElement('span');sw.className='palette-choice-swatches';[o.colors[o.r[0]],o.colors[o.r[2]],o.colors[o.r[4]],o.colors[o.r[8]]].forEach(color=>{const i=document.createElement('i');i.style.background=color;sw.append(i)});
-const name=document.createElement('strong');name.textContent=String(o.number).padStart(2,'0')+' · '+o.theme;
-const sub=document.createElement('small');sub.textContent=o.variant;
-b.append(sw,name,sub);b.addEventListener('click',()=>apply(o));grid.append(b);
-});
-function setOpen(open){menu.hidden=!open;launcher.setAttribute('aria-expanded',String(open));if(open)grid.querySelector('button')?.focus()}
-launcher.addEventListener('click',()=>setOpen(menu.hidden));close?.addEventListener('click',()=>{setOpen(false);launcher.focus()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){setOpen(false);launcher.focus()}});
+button.addEventListener('click',()=>{current=(current+1)%all.length;apply(all[current])});
 apply(all[0]);
 })();
