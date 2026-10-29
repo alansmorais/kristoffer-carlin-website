@@ -109,3 +109,7 @@ body{background:var(--page-bg)!important;color:var(--page-text)!important}
 .palette-choice strong{font-size:.68rem}.palette-choice small{font-size:.58rem;color:#d5ded3;line-height:1.2}
 .palette-menu-status{font-size:.7rem;color:#d5ded3;margin:.8rem 0 0}
 @media(max-width:600px){.palette-floater{right:10px;top:90px}.palette-menu{width:min(360px,calc(100vw - 20px));max-height:calc(100vh - 140px);padding:.7rem}.palette-menu-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem}.palette-choice{padding:.35rem}.palette-choice strong{font-size:.63rem}}
+
+/* Force visibility of the floating launcher in all experimental previews */
+#palette-floater{position:fixed!important;z-index:2147483000!important;right:18px!important;top:105px!important;display:block!important;visibility:visible!important;opacity:1!important}
+#palette-launcher{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:2147483000!important}
