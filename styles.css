@@ -113,3 +113,9 @@ body{background:var(--page-bg)!important;color:var(--page-text)!important}
 /* Force visibility of the floating launcher in all experimental previews */
 #palette-floater{position:fixed!important;z-index:2147483000!important;right:18px!important;top:105px!important;display:block!important;visibility:visible!important;opacity:1!important}
 #palette-launcher{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:2147483000!important}
+
+/* Single-button theme cycler */
+#palette-floater{position:fixed!important;z-index:2147483000!important;right:18px!important;top:105px!important;display:block!important;visibility:visible!important;opacity:1!important}
+#palette-launcher{display:flex!important;visibility:visible!important;opacity:1!important;white-space:nowrap}
+#palette-current{display:block!important;max-width:230px}
+@media(max-width:600px){#palette-floater{right:10px!important;top:90px!important}#palette-launcher{padding:10px 12px!important;font-size:12px!important}}
