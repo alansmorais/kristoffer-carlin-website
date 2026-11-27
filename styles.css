@@ -47,3 +47,12 @@
  .hero-visual .photo-caption{bottom:25px!important}
  .hero-stamp{left:4%!important;bottom:55px!important}
 }
+
+/* v2 hard override: right panel always shows the portrait over the forest background */
+.hero{display:grid!important;grid-template-columns:1fr 1fr!important;min-height:680px!important;padding:0!important;background:var(--forest)!important}
+.hero-copy{grid-column:1!important;grid-row:1!important;align-self:center!important}
+.hero-visual{grid-column:2!important;grid-row:1!important;position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:680px!important;overflow:hidden!important;isolation:isolate!important;background:transparent!important}
+.hero-visual:before{content:""!important;position:absolute!important;inset:0!important;z-index:-1!important;background:linear-gradient(rgba(10,31,18,.18),rgba(10,31,18,.28)),url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=90") center/cover no-repeat!important}
+.hero-portrait-wrap{display:block!important;position:relative!important;z-index:2!important;width:min(82%,490px)!important;height:570px!important;min-height:430px!important;opacity:1!important;visibility:visible!important;overflow:hidden!important;border:2px solid rgba(245,237,227,.9)!important;border-radius:230px 230px 14px 14px!important;box-shadow:0 25px 65px rgba(0,0,0,.42)!important}
+.hero-portrait{display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center 25%!important}
+@media(max-width:760px){.hero{grid-template-columns:1fr!important}.hero-copy{grid-column:1!important;grid-row:1!important}.hero-visual{grid-column:1!important;grid-row:2!important;min-height:550px!important}.hero-portrait-wrap{width:min(86%,420px)!important;height:460px!important;min-height:0!important}}
