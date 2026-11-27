@@ -1,11 +1,27 @@
 (() => {
-const menuButton=document.querySelector('.menu-toggle'),nav=document.querySelector('#primary-nav'),langButtons=[document.querySelector('#language-toggle'),document.querySelector('#footer-language')].filter(Boolean);let language='no';
-menuButton?.addEventListener('click',()=>{const open=nav.classList.toggle('is-open');menuButton.setAttribute('aria-expanded',String(open))});
-nav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('is-open');menuButton?.setAttribute('aria-expanded','false')}));
-function setLanguage(next){language=next;document.documentElement.lang=language;document.querySelectorAll('[data-no][data-en]').forEach(el=>el.innerHTML=language==='no'?el.dataset.no:el.dataset.en);langButtons.forEach(b=>{b.textContent=language==='no'?'EN':'NO';b.setAttribute('aria-label',language==='no'?'Switch to English':'Bytt til norsk')});document.title=language==='no'?'Kristoffer Carlin — Mer levende. Mer deg.':'Kristoffer Carlin — More alive. More you.';loadContent()}
-langButtons.forEach(b=>b.addEventListener('click',()=>setLanguage(language==='no'?'en':'no')));document.querySelector('#year').textContent=new Date().getFullYear();
-const endpoint=window.KRISTOFFER_CONFIG?.appsScriptUrl;
-async function loadContent(){if(!endpoint)return;for(const [action,target] of [['events','#events-list'],['blog','#blog-list'],['gallery','#gallery-grid'],['testimonials','#testimonials-list']]){try{const res=await fetch(endpoint+'?action='+action+'&lang='+language,{cache:'no-store'});if(!res.ok)continue;const data=await res.json();if(!data.ok||!Array.isArray(data[action]))continue;const container=document.querySelector(target);container.replaceChildren();data[action].forEach(item=>{if(action==='gallery'){const img=document.createElement('img');img.src=item.imageUrl;img.alt=item.alt||'';container.append(img);return}const article=document.createElement('article');article.className=action==='events'?'event-row':'blog-row';const heading=document.createElement('h3');heading.textContent=item.title||item.name||'';const desc=document.createElement('p');desc.textContent=item.summary||item.text||'';if(action==='testimonials'){article.append(desc);container.append(article);return}if(action==='events'){const date=document.createElement('div');date.className='event-date';date.textContent=item.dateLabel||'';const details=document.createElement('div');details.append(heading,desc);const link=document.createElement('a');link.href=item.bookingUrl||'#contact';link.textContent=language==='no'?'Les mer / meld deg på ↗':'Details / reserve ↗';article.append(date,details,link)}else{article.append(heading,desc);if(item.url){const link=document.createElement('a');link.href=item.url;link.textContent=language==='no'?'Les artikkelen ↗':'Read article ↗';article.append(link)}}container.append(article)})}catch(e){console.warn('Content load failed:',action)}}}
-const form=document.querySelector('#contact-form'),status=document.querySelector('#contact-status');form?.addEventListener('submit',async e=>{e.preventDefault();if(!endpoint){status.textContent=language==='no'?'Skjemaet er ikke aktivert ennå.':'The form is not enabled yet.';return}const button=form.querySelector('button[type=submit]');button.disabled=true;try{const data=Object.fromEntries(new FormData(form));const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'contact',...data,lang:language})});const result=await res.json();if(!res.ok||result.ok!==true)throw Error('Submission failed');form.reset();status.textContent=language==='no'?'Takk — meldingen er sendt.':'Thank you — your message has been sent.'}catch(_){status.textContent=language==='no'?'Meldingen kunne ikke sendes. Prøv igjen senere.':'Your message could not be sent. Please try again later.'}finally{button.disabled=false}});
-loadContent();
+const menu=document.querySelector('.menu-toggle');
+const nav=document.querySelector('#nav');
+menu?.addEventListener('click',()=>{
+  const open=nav.classList.toggle('open');
+  menu.setAttribute('aria-expanded',String(open));
+  menu.textContent=open?'×':'☰';
+});
+nav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{
+  nav.classList.remove('open');
+  menu?.setAttribute('aria-expanded','false');
+  if(menu)menu.textContent='☰';
+}));
+let language='no';
+const toggle=document.querySelector('#language-toggle');
+toggle?.addEventListener('click',()=>{
+  language=language==='no'?'en':'no';
+  document.documentElement.lang=language;
+  document.querySelectorAll('[data-no][data-en]').forEach(el=>{
+    el.innerHTML=language==='no'?el.dataset.no:el.dataset.en;
+  });
+  toggle.textContent=language==='no'?'EN':'NO';
+  document.title=language==='no'?'Kristoffer Carlin — Velkommen hjem til deg selv':'Kristoffer Carlin — Welcome home to yourself';
+});
+const year=document.querySelector('#year');
+if(year)year.textContent=new Date().getFullYear();
 })();
