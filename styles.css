@@ -85,3 +85,36 @@
  }
  .hero-portrait-wrap{width:min(72%,340px)!important;height:420px!important}
 }
+
+
+/* V4: one continuous forest photograph across the complete hero, with a soft left fade */
+.hero{
+  background:
+    linear-gradient(90deg,
+      rgba(12,43,25,.84) 0%,
+      rgba(12,43,25,.70) 24%,
+      rgba(12,43,25,.38) 52%,
+      rgba(12,43,25,.12) 100%),
+    url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2400&q=90")
+    center center/cover no-repeat!important;
+  background-color:#13341e!important;
+}
+.hero:before{display:none!important}
+.hero-visual{background:transparent!important}
+.hero-visual:before{display:none!important}
+.hero-portrait-wrap{
+  width:min(68%,340px)!important;
+  height:440px!important;
+  min-height:0!important;
+  border-radius:175px 175px 12px 12px!important;
+}
+.hero-portrait{object-position:center 24%!important}
+@media(max-width:760px){
+ .hero{
+   background:
+     linear-gradient(180deg,rgba(12,43,25,.78) 0%,rgba(12,43,25,.52) 100%),
+     url("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=90")
+     center/cover no-repeat!important;
+ }
+ .hero-portrait-wrap{width:min(72%,330px)!important;height:420px!important}
+}
