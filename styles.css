@@ -16,3 +16,14 @@
 @media(max-width:430px){h1{font-size:51px}.work-grid{grid-template-columns:1fr}.work-card,.work-card:nth-child(4),.work-card:nth-child(5),.work-card:last-child{grid-column:span 1;min-height:330px}.trustbar{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}.newsletter form>div{display:grid}.footer-links{gap:12px}}
 
 .help{background:var(--ivory)}.help h2{font-size:clamp(40px,4.7vw,60px);margin-bottom:40px}.help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0 36px}.help-grid p{font-size:12px;line-height:1.8;color:#5d554b;border-top:1px solid #211d1928;padding:17px 0;margin:0}@media(max-width:760px){.help-grid{grid-template-columns:1fr 1fr;gap:0 22px}}@media(max-width:430px){.help-grid{grid-template-columns:1fr}}
+
+/* Joanna-inspired portrait hero: full forest backdrop + Kristoffer on the right */
+.hero{isolation:isolate;background:var(--forest) url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2200&q=90') center 48%/cover no-repeat;position:relative;grid-template-columns:52% 48%;padding-left:8%;min-height:650px}
+.hero:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(10,34,20,.94) 0%,rgba(13,43,24,.88) 43%,rgba(13,43,24,.42) 100%)}
+.hero-copy{position:relative;z-index:1;padding-right:7%;max-width:670px}
+.hero-visual{position:relative;z-index:1;min-height:650px;display:flex;align-items:center;justify-content:center;padding:38px 8% 55px 0;background:none}
+.hero-portrait-wrap{width:min(100%,470px);height:550px;overflow:hidden;border-radius:180px 180px 18px 18px;border:1px solid rgba(245,237,227,.55);box-shadow:0 28px 70px rgba(0,0,0,.38);background:#344b36}
+.hero-portrait{width:100%;height:100%;display:block;object-fit:cover;object-position:center 28%}
+.hero-visual .photo-caption{left:50%;right:auto;bottom:23px;transform:translateX(-50%);width:min(100%,470px);padding:0 10px;white-space:nowrap}
+.hero-stamp{left:5%;bottom:105px;z-index:3}
+@media(max-width:760px){.hero{display:grid;grid-template-columns:1fr;padding:0;min-height:0}.hero-copy{padding:65px 7% 32px}.hero-visual{min-height:0;padding:10px 7% 58px;display:block}.hero-portrait-wrap{height:440px;width:min(100%,420px);margin:0 auto;border-radius:160px 160px 16px 16px}.hero-visual .photo-caption{left:50%;bottom:20px}.hero-stamp{left:4%;bottom:55px;width:78px;height:78px}}
